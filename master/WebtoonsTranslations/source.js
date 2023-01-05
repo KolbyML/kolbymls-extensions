@@ -989,6 +989,7 @@ const WEBTOONS_DOMAIN = 'https://webtoons.com/';
 const WEBTOONS_TRANSLATE_DOMAIN = 'https://translate.webtoons.com/';
 const BASE_API = 'https://global.apis.naver.com';
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44';
+const MOBILE_BASE_URL = 'https://m.webtoons.com';
 const PAGE_SIZE = 24;
 exports.WebtoonsTranslationsInfo = {
     author: 'Kolby ML',
@@ -1034,13 +1035,22 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
     }
     getMangaShareUrl(mangaId) { return `${WEBTOONS_DOMAIN}/en/${mangaId}`; }
     async getMangaDetails(mangaId) {
+        const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
         const request = createRequestObject({
-            url: `${WEBTOONS_DOMAIN}/comic/${mangaId}`,
+            url: `${MOBILE_BASE_URL}${mangaId}&languageCode=${lang[0]}`,
             method: 'GET'
         });
-        const response = await this.requestManager.schedule(request, 1);
+        const response = await this.requestManager.schedule(request, 3);
         const $ = this.cheerio.load(response.data);
-        return this.parser.parseMangaDetails($, mangaId);
+        const title = $('.subj').text().split('\n')[0]?.trim().toLowerCase().replaceAll(' ', '-') ?? '';
+        const label = $('.genre').text().replace(/ /g, '-').toLowerCase().trim();
+        const requestdetails = createRequestObject({
+            url: `${MOBILE_BASE_URL}/en/${label}/${title}/list`,
+            method: 'GET'
+        });
+        const responsedetails = await this.requestManager.schedule(requestdetails, 3);
+        const $$ = this.cheerio.load(responsedetails.data);
+        return this.parser.parseMangaDetails($$, mangaId);
     }
     async getChapters(mangaId) {
         const request = createRequestObject({
