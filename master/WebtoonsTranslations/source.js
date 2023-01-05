@@ -1132,25 +1132,21 @@ class Parser {
         const chapters = [];
         const langCode = this.parseLanguageCode(languageCode);
         json_data.result.episodes.forEach((element) => {
-            console.log('de de ' + element.title);
             if (element.translateCompleted) {
-                console.log('hit');
                 const id = String(element.episodeNo);
                 const chapNum = Number(id);
                 const name = element.title;
                 const time = new Date(element.updateYmdt);
-                console.log(' zeze ' + id + ' ' + mangaId + ' ' + chapNum + ' ' + langCode + ' ' + name + ' ' + time);
                 chapters.push(createChapter({
                     id,
                     mangaId,
                     chapNum: isNaN(chapNum) ? 0 : chapNum,
                     langCode,
                     name: name,
+                    time
                 }));
             }
         });
-        console.log('hit rate ' + chapters.length);
-        console.log('hit rated ' + JSON.stringify(chapters));
         return chapters;
     }
     parseLanguageCode(languageCode) {
