@@ -990,7 +990,7 @@ const WEBTOONS_TRANSLATE_DOMAIN = 'https://translate.webtoons.com/';
 const BASE_API = 'https://global.apis.naver.com';
 // const COVER_BASE_URL = 'https://mwebtoon-phinf.pstatic.net'
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44';
-// const PAGE_SIZE = 24
+const PAGE_SIZE = 24;
 exports.WebtoonsTranslationsInfo = {
     author: 'Kolby ML',
     description: 'Extension that pulls translated comics from Webtoons',
@@ -1063,13 +1063,14 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
         return this.parser.parseChapterDetails($, mangaId, chapterId);
     }
     async getHomePageSections(sectionCallback) {
+        const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
         const request = createRequestObject({
-            url: `${WEBTOONS_DOMAIN}/en/top`,
+            url: `${BASE_API}/lineWebtoon/ctrans/translatedWebtoons_jsonp.json?orderType=UPDATE&offset=0&size=${PAGE_SIZE}&languageCode=${lang[0]}`,
             method: 'GET'
         });
-        const response = await this.requestManager.schedule(request, 1);
-        const $ = this.cheerio.load(response.data);
-        return this.parser.parseHomeSections($, sectionCallback);
+        const data = await this.requestManager.schedule(request, 1);
+        const json_data = (typeof data.data == 'string') ? JSON.parse(data.data) : data.data;
+        return this.parser.parseHomeSections(json_data, sectionCallback);
     }
     async getSearchResults(query, metadata) {
         let page = metadata?.page ?? 1;
@@ -1244,32 +1245,31 @@ class Parser {
         });
         return results;
     }
-    parseHomeSections($, sectionCallback) {
-        let popularTitle;
-        popularTitle = 'Top Originals';
+    parseHomeSections(json_data, sectionCallback) {
+        let popularTitle = 'Top Originals';
+        console.log('cat' + json_data);
+        console.log(' cat cat cat cat cat cat test');
         const popularSection = createHomeSection({
             id: '0',
             title: popularTitle,
-            type: paperback_extensions_common_1.HomeSectionType.featured,
+            type: paperback_extensions_common_1.HomeSectionType.doubleRow,
             view_more: false
         });
         const popularArray = [];
-        for (const popularComic of $('.ranking_lst.popular').next().find('ul > li').toArray()) {
-            if (popularArray.length >= 10)
-                break;
-            const id = $('a', popularComic).attr('href')?.split(`en/`)[1] ?? '';
-            const image = $(popularComic).find('img').attr('src') ?? '';
-            const title = $(popularComic).find('.subj').text().trim() ?? '';
-            const subtitle = $(popularComic).find('.author').text().trim() ?? '';
-            if (!id || !title || id.startsWith('challenge') || id.startsWith('top?rankingGenre'))
-                continue;
+        json_data.forEach((element) => {
+            const title = element.representTitle;
+            const idNumber = element.titleNo;
+            const teamVersion = element.teamVersion ?? 0;
+            const id = `/translate/episodeList?titleNo=${idNumber}&teamVersion=${teamVersion}`;
+            const subtitle = element.writeAuthorName;
+            const image = element.thumbnailIPadUrl ?? element.thumbnailMobileUrl ?? '';
             popularArray.push(createMangaTile({
                 id: id,
                 image: image ?? 'https://i.imgur.com/GYUxEX8.png',
-                title: createIconText({ text: this.decodeHTMLEntity(title) }),
-                subtitleText: createIconText({ text: this.decodeHTMLEntity(subtitle) })
+                title: createIconText({ text: title }),
+                subtitleText: createIconText({ text: subtitle })
             }));
-        }
+        });
         popularSection.items = popularArray;
         sectionCallback(popularSection);
     }
