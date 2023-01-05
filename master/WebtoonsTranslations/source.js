@@ -1218,8 +1218,6 @@ class Parser {
     }
     parseSearchResults(json_data, query) {
         const results = [];
-        console.log(json_data);
-        console.log(' bob bob bob bob bob test');
         json_data.result.titleList.forEach((element) => {
             const keywords = (query.title ?? '').split(/(\s+)/);
             keywords.forEach(keyword => {
@@ -1243,8 +1241,6 @@ class Parser {
     }
     parseHomeSections(json_data, sectionCallback) {
         const popularTitle = 'Top Originals';
-        console.log('cat' + JSON.stringify(json_data));
-        console.log(' cat cat cat cat cat cat test');
         const popularSection = createHomeSection({
             id: '0',
             title: popularTitle,
