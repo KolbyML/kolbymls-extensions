@@ -1131,7 +1131,9 @@ class Parser {
     parseChapters(json_data, mangaId, languageCode) {
         const chapters = [];
         const langCode = this.parseLanguageCode(languageCode);
+        console.log('yu yu yu ' + JSON.stringify(json_data));
         json_data.result.episodes.forEach((element) => {
+            console.log('de de ' + element.title);
             if (element.translateCompleted) {
                 const id = element.episodeNo;
                 const chapNum = Number(id);
