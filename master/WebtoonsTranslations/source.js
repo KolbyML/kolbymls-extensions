@@ -1240,12 +1240,11 @@ class Parser {
         return results;
     }
     parseHomeSections(json_data, sectionCallback) {
-        const popularTitle = 'Top Originals';
-        const popularSection = createHomeSection({
+        const showSection = createHomeSection({
             id: '0',
-            title: popularTitle,
+            title: 'Comics',
             type: paperback_extensions_common_1.HomeSectionType.singleRowNormal,
-            view_more: false
+            view_more: true
         });
         const popularArray = [];
         json_data.result.titleList.forEach((element) => {
@@ -1262,8 +1261,8 @@ class Parser {
                 subtitleText: createIconText({ text: subtitle })
             }));
         });
-        popularSection.items = popularArray;
-        sectionCallback(popularSection);
+        showSection.items = popularArray;
+        sectionCallback(showSection);
     }
     parseTags($) {
         const genres = [];
