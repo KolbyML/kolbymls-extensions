@@ -994,7 +994,7 @@ const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 exports.WebtoonsTranslationsInfo = {
     author: 'Kolby ML',
     description: 'Extension that pulls translated comics from Webtoons',
-    icon: 'icon.png',
+    icon: 'logo.png',
     name: 'Webtoons Translations',
     version: '1.0.0',
     authorWebsite: 'http://github.com/KolbyML',
