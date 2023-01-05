@@ -1221,6 +1221,8 @@ class Parser {
     }
     parseSearchResults(json_data, query) {
         const results = [];
+        console.log(json_data);
+        console.log(' bob bob bob bob bob test');
         json_data.forEach((element) => {
             const keywords = (query.title ?? '').split(/(\s+)/);
             keywords.forEach(keyword => {
