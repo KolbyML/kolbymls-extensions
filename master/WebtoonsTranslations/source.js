@@ -1048,14 +1048,14 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
     }
     async getChapters(mangaId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
-        const [titleID, _] = mangaId.split(' ');
+        const [titleID, teamVersion] = mangaId.split(' ');
         const request = createRequestObject({
-            url: `${BASE_API}/lineWebtoon/ctrans/translatedEpisodes_jsonp.json?titleNo=${titleID}&languageCode=${lang[0]}&offset=0&limit=10000`,
+            url: `${BASE_API}/lineWebtoon/ctrans/translatedEpisodes_jsonp.json?titleNo=${titleID}&languageCode=${lang[0]}&offset=0&limit=10000&teamVersion=${teamVersion}`,
             method: 'GET',
         });
-        const response = await this.requestManager.schedule(request, 1);
-        const $ = this.cheerio.load(response.data);
-        return this.parser.parseChapters($, mangaId, 'en');
+        const data = await this.requestManager.schedule(request, 1);
+        const json_data = (typeof data.data == 'string') ? JSON.parse(data.data) : data.data;
+        return this.parser.parseChapters(json_data, mangaId, lang[0] ?? 'en');
     }
     async getChapterDetails(mangaId, chapterId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
@@ -1128,25 +1128,25 @@ class Parser {
             desc: desc,
         });
     }
-    parseChapters($, mangaId, languageCode) {
+    parseChapters(json_data, mangaId, languageCode) {
         const chapters = [];
         const langCode = this.parseLanguageCode(languageCode);
-        for (const chapter of $('#_episodeList').find('li').toArray()) {
-            const id = $(chapter).attr('data-episode-no');
-            const chapNum = Number(id);
-            const name = $(chapter).find('.sub_title').find('span').first().text().trim();
-            const time = new Date($(chapter).find('.date').text().trim());
-            if (!id)
-                continue;
-            chapters.push(createChapter({
-                id,
-                mangaId,
-                chapNum: isNaN(chapNum) ? 0 : chapNum,
-                langCode,
-                name: this.decodeHTMLEntity(name),
-                time
-            }));
-        }
+        json_data.result.episodes.forEach((element) => {
+            if (element.translateCompleted) {
+                const id = element.episodeNo;
+                const chapNum = Number(id);
+                const name = element.title;
+                const time = new Date(element.updateYmdt);
+                chapters.push(createChapter({
+                    id,
+                    mangaId,
+                    chapNum: isNaN(chapNum) ? 0 : chapNum,
+                    langCode,
+                    name: name,
+                    time
+                }));
+            }
+        });
         return chapters;
     }
     parseLanguageCode(languageCode) {
