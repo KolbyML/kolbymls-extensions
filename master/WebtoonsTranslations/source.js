@@ -1224,7 +1224,7 @@ class Parser {
         const results = [];
         console.log(json_data);
         console.log(' bob bob bob bob bob test');
-        json_data.forEach((element) => {
+        json_data.result.titleList.forEach((element) => {
             const keywords = (query.title ?? '').split(/(\s+)/);
             keywords.forEach(keyword => {
                 if (element.representTitle.toLowerCase().includes(keyword.toLowerCase())) {
@@ -1256,7 +1256,7 @@ class Parser {
             view_more: false
         });
         const popularArray = [];
-        json_data.forEach((element) => {
+        json_data.result.titleList.forEach((element) => {
             const title = element.representTitle;
             const idNumber = element.titleNo;
             const teamVersion = element.teamVersion ?? 0;
