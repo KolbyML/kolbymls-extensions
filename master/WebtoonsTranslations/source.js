@@ -996,7 +996,7 @@ exports.WebtoonsTranslationsInfo = {
     description: 'Extension that pulls translated comics from Webtoons',
     icon: 'logo.png',
     name: 'Webtoons Translations',
-    version: '1.0.1',
+    version: '1.0.2',
     authorWebsite: 'http://github.com/KolbyML',
     websiteBaseURL: WEBTOONS_TRANSLATE_DOMAIN,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -1245,25 +1245,12 @@ class Parser {
         return results;
     }
     parseHomeSections($, sectionCallback) {
-        let popularTitle, newTrendTitle, canvasTitle;
+        let popularTitle;
         popularTitle = 'Top Originals';
-        newTrendTitle = 'New and Trending';
-        canvasTitle = 'Top Canvas';
         const popularSection = createHomeSection({
             id: '0',
             title: popularTitle,
-            type: paperback_extensions_common_1.HomeSectionType.singleRowNormal,
-            view_more: false
-        });
-        const newTrendSection = createHomeSection({
-            id: '1',
-            title: newTrendTitle,
-            type: paperback_extensions_common_1.HomeSectionType.singleRowNormal,
-            view_more: false
-        });
-        const canvasSection = createHomeSection({
-            id: '2', title: canvasTitle,
-            type: paperback_extensions_common_1.HomeSectionType.singleRowNormal,
+            type: paperback_extensions_common_1.HomeSectionType.featured,
             view_more: false
         });
         const popularArray = [];
@@ -1285,44 +1272,6 @@ class Parser {
         }
         popularSection.items = popularArray;
         sectionCallback(popularSection);
-        const newTrendArray = [];
-        for (const newTrendComic of $('ul.lst_type1').find('li').toArray()) {
-            if (newTrendArray.length >= 10)
-                break;
-            const id = $('a', newTrendComic).attr('href')?.split(`en/`)[1] ?? '';
-            const image = $(newTrendComic).find('img').attr('src') ?? '';
-            const title = $(newTrendComic).find('.subj').text().trim() ?? '';
-            const subtitle = $(newTrendComic).find('.author').text().trim() ?? '';
-            if (!id || !title || id.startsWith('challenge'))
-                continue;
-            newTrendArray.push(createMangaTile({
-                id: id,
-                image: image ?? 'https://i.imgur.com/GYUxEX8.png',
-                title: createIconText({ text: this.decodeHTMLEntity(title) }),
-                subtitleText: createIconText({ text: this.decodeHTMLEntity(subtitle) })
-            }));
-        }
-        newTrendSection.items = newTrendArray;
-        sectionCallback(newTrendSection);
-        const canvasArray = [];
-        for (const canvasComic of $('.ranking_lst.popular').next().next().find('ul > li').toArray()) {
-            if (canvasArray.length >= 10)
-                break;
-            const id = $('a', canvasComic).attr('href')?.split(`en/`)[1] ?? '';
-            const image = $(canvasComic).find('img').attr('src') ?? '';
-            const title = $(canvasComic).find('.subj').text().trim() ?? '';
-            const subtitle = $(canvasComic).find('.author').text().trim() ?? '';
-            if (!id || !title || id.startsWith('top?rankingGenre'))
-                continue;
-            canvasArray.push(createMangaTile({
-                id: id,
-                image: image ?? 'https://i.imgur.com/GYUxEX8.png',
-                title: createIconText({ text: this.decodeHTMLEntity(title) }),
-                subtitleText: createIconText({ text: this.decodeHTMLEntity(subtitle) })
-            }));
-        }
-        canvasSection.items = canvasArray;
-        sectionCallback(canvasSection);
     }
     parseTags($) {
         const genres = [];
