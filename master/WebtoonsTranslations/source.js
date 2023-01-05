@@ -390,10 +390,10 @@ const MOBILE_BASE_URL = 'https://m.webtoons.com';
 const PAGE_SIZE = 24;
 exports.WebtoonsTranslationsInfo = {
     author: 'Kolby ML',
-    description: 'Extension that pulls translated comics from Webtoons',
+    description: 'Extension that pulls translated comics from Webtoons Translations',
     icon: 'logo.png',
     name: 'Webtoons Translations',
-    version: '3.0.2',
+    version: '1.0.0',
     authorWebsite: 'http://github.com/KolbyML',
     websiteBaseURL: WEBTOONS_TRANSLATE_DOMAIN,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -430,7 +430,6 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
             }
         });
     }
-    getMangaShareUrl(mangaId) { return `${WEBTOONS_DOMAIN}/en/${mangaId}`; }
     async getMangaDetails(mangaId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
         const [titleID, teamVersion] = mangaId.split('-');
