@@ -1247,7 +1247,7 @@ class Parser {
     }
     parseHomeSections(json_data, sectionCallback) {
         let popularTitle = 'Top Originals';
-        console.log('cat' + json_data);
+        console.log('cat' + JSON.stringify(json_data));
         console.log(' cat cat cat cat cat cat test');
         const popularSection = createHomeSection({
             id: '0',
