@@ -1044,8 +1044,8 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
         console.log('kak bat0' + request.url);
         console.log('kak bat1' + response.data);
         const $ = this.cheerio.load(response.data);
-        console.log('kok jff' + $('.subj').text());
-        const title = $('.subj').text().split('\n')[0]?.trim().toLowerCase().replaceAll(' ', '-') ?? '';
+        console.log('kok jff' + $('meta[property="og:title"]').attr('content'));
+        const title = $('meta[property="og:title"]').attr('content')?.split('\n')[0]?.trim().toLowerCase().replaceAll(' ', '-') ?? '';
         const label = $('.genre').text().replace(/ /g, '-').toLowerCase().trim();
         const requestdetails = createRequestObject({
             url: `${MOBILE_BASE_URL}/en/${label}/${title}/list`,
@@ -1055,7 +1055,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
         console.log('kak bat3' + response.data);
         const responsedetails = await this.requestManager.schedule(requestdetails, 3);
         const $$ = this.cheerio.load(responsedetails.data);
-        return this.parser.parseMangaDetails($$, mangaId);
+        return this.parser.parseMangaDetails($, $$, mangaId);
     }
     async getChapters(mangaId) {
         const request = createRequestObject({
@@ -1122,9 +1122,9 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const entities = require("entities");
 const COVER_BASE_URL = 'https://mwebtoon-phinf.pstatic.net';
 class Parser {
-    parseMangaDetails($, mangaId) {
-        const title = $('.subj').text().split('\n')[0]?.trim() ?? '';
-        const desc = $('p.summary').text().trim() ?? '';
+    parseMangaDetails($, _$$, mangaId) {
+        const title = $('meta[property="og:title"]').attr('content')?.split('\n')[0]?.trim() ?? '';
+        const desc = $('meta[property="og:description"]').attr('content')?.trim() ?? '';
         const image = $('.background_pic').find('img').attr('src') ?? $('.detail_chal_pic').find('img').attr('src');
         const rating = Number($('em.grade_num').text().replace(',', '.').trim()) ?? 0;
         const status = paperback_extensions_common_1.MangaStatus.ONGOING;
