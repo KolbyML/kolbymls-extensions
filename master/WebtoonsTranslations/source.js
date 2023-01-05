@@ -1048,6 +1048,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
             url: `${MOBILE_BASE_URL}/en/${label}/${title}/list`,
             method: 'GET'
         });
+        console.log('kak bat' + requestdetails.url);
         const responsedetails = await this.requestManager.schedule(requestdetails, 3);
         const $$ = this.cheerio.load(responsedetails.data);
         return this.parser.parseMangaDetails($$, mangaId);
