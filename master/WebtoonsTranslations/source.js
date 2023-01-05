@@ -1041,7 +1041,9 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
             method: 'GET'
         });
         const response = await this.requestManager.schedule(request, 3);
+        console.log('kak bat' + response.data);
         const $ = this.cheerio.load(response.data);
+        console.log('kok jff' + $('.subj').text());
         const title = $('.subj').text().split('\n')[0]?.trim().toLowerCase().replaceAll(' ', '-') ?? '';
         const label = $('.genre').text().replace(/ /g, '-').toLowerCase().trim();
         const requestdetails = createRequestObject({
@@ -1049,7 +1051,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
             method: 'GET'
         });
         console.log('kak bat' + requestdetails.url);
-        console.log('kak bat' + $.toString());
+        console.log('kak bat' + response.data);
         const responsedetails = await this.requestManager.schedule(requestdetails, 3);
         const $$ = this.cheerio.load(responsedetails.data);
         return this.parser.parseMangaDetails($$, mangaId);
