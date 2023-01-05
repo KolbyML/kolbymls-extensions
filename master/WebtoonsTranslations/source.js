@@ -1059,13 +1059,14 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
     }
     async getChapterDetails(mangaId, chapterId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
+        const [titleID, teamVersion] = mangaId.split('-');
         const request = createRequestObject({
-            url: `${BASE_API}/lineWebtoon/ctrans/translatedWebtoons_jsonp.json?orderType=UPDATE&offset=0&size=${PAGE_SIZE}&languageCode=${lang[0]}`,
+            url: `${BASE_API}/lineWebtoon/ctrans/translatedEpisodeDetail_jsonp.json?titleNo=${titleID}&episodeNo=${chapterId}&languageCode=${lang[0]}&teamVersion=${teamVersion}`,
             method: 'GET',
         });
-        const response = await this.requestManager.schedule(request, 1);
-        const $ = this.cheerio.load(response.data);
-        return this.parser.parseChapterDetails($, mangaId, chapterId);
+        const data = await this.requestManager.schedule(request, 1);
+        const json_data = (typeof data.data == 'string') ? JSON.parse(data.data) : data.data;
+        return this.parser.parseChapterDetails(json_data, mangaId, chapterId);
     }
     async getHomePageSections(sectionCallback) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
@@ -1203,14 +1204,11 @@ class Parser {
                 return paperback_extensions_common_1.LanguageCode.ENGLISH;
         }
     }
-    parseChapterDetails($, mangaId, id) {
+    parseChapterDetails(json_data, mangaId, id) {
         const pages = [];
-        for (const img of $('.viewer_lst').find('img').toArray()) {
-            const imgUrl = $(img).attr('data-url')?.trim() ?? $(img).attr('src')?.trim();
-            if (!imgUrl)
-                continue;
-            pages.push(imgUrl);
-        }
+        json_data.result.imageInfo.forEach((element) => {
+            pages.push(element.imageUrl);
+        });
         return createChapterDetails({
             id,
             mangaId,
