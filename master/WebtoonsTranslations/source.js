@@ -1041,6 +1041,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
             method: 'GET'
         });
         const response = await this.requestManager.schedule(request, 3);
+        console.log('kak bat0' + request.url);
         console.log('kak bat1' + response.data);
         const $ = this.cheerio.load(response.data);
         console.log('kok jff' + $('.subj').text());
