@@ -1150,7 +1150,10 @@ class Parser {
             }
         });
         console.log('hit rate ' + chapters.length);
-        console.log('hit rated ' + chapters);
+        console.log('hit rated ' + JSON.stringify(chapters));
+        chapters.forEach(element => {
+            console.log('hit ratek ' + element.id + ' ' + element.name + ' ' + element.mangaId + ' ' + element.chapNum + ' ' + element.langCode);
+        });
         return chapters;
     }
     parseLanguageCode(languageCode) {
