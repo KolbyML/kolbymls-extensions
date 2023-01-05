@@ -996,7 +996,7 @@ exports.WebtoonsTranslationsInfo = {
     description: 'Extension that pulls translated comics from Webtoons',
     icon: 'logo.png',
     name: 'Webtoons Translations',
-    version: '1.0.0',
+    version: '1.0.1',
     authorWebsite: 'http://github.com/KolbyML',
     websiteBaseURL: WEBTOONS_TRANSLATE_DOMAIN,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
