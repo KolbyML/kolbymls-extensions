@@ -1036,7 +1036,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
     getMangaShareUrl(mangaId) { return `${WEBTOONS_DOMAIN}/en/${mangaId}`; }
     async getMangaDetails(mangaId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
-        const [titleID, teamVersion] = mangaId.split(' ');
+        const [titleID, teamVersion] = mangaId.split('-');
         const id = `/translate/episodeList?titleNo=${titleID}&teamVersion=${teamVersion}`;
         const request = createRequestObject({
             url: `${MOBILE_BASE_URL}${id}&languageCode=${lang[0]}`,
@@ -1048,7 +1048,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
     }
     async getChapters(mangaId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
-        const [titleID, teamVersion] = mangaId.split(' ');
+        const [titleID, teamVersion] = mangaId.split('-');
         const request = createRequestObject({
             url: `${BASE_API}/lineWebtoon/ctrans/translatedEpisodes_jsonp.json?titleNo=${titleID}&languageCode=${lang[0]}&offset=0&limit=10000&teamVersion=${teamVersion}`,
             method: 'GET',
@@ -1147,7 +1147,6 @@ class Parser {
                     chapNum: isNaN(chapNum) ? 0 : chapNum,
                     langCode,
                     name: name,
-                    time
                 }));
             }
         });
@@ -1234,7 +1233,7 @@ class Parser {
                     const title = element.representTitle;
                     const idNumber = element.titleNo;
                     const teamVersion = element.teamVersion ?? 0;
-                    const id = `${idNumber} ${teamVersion}`;
+                    const id = `${idNumber}-${teamVersion}`;
                     const subtitle = element.writeAuthorName;
                     const image = element.thumbnailIPadUrl ?? element.thumbnailMobileUrl ?? '';
                     results.push(createMangaTile({
@@ -1263,7 +1262,7 @@ class Parser {
             const title = element.representTitle;
             const idNumber = element.titleNo;
             const teamVersion = element.teamVersion ?? 0;
-            const id = `/translate/episodeList?titleNo=${idNumber}&teamVersion=${teamVersion}`;
+            const id = `${idNumber}-${teamVersion}`;
             const subtitle = element.writeAuthorName;
             const image = element.thumbnailIPadUrl ?? element.thumbnailMobileUrl ?? '';
             popularArray.push(createMangaTile({
