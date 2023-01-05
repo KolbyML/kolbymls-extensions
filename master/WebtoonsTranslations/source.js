@@ -1036,8 +1036,10 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
     getMangaShareUrl(mangaId) { return `${WEBTOONS_DOMAIN}/en/${mangaId}`; }
     async getMangaDetails(mangaId) {
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
+        const [titleID, teamVersion] = mangaId.split(' ');
+        const id = `/translate/episodeList?titleNo=${titleID}&teamVersion=${teamVersion}`;
         const request = createRequestObject({
-            url: `${MOBILE_BASE_URL}${mangaId}&languageCode=${lang[0]}`,
+            url: `${MOBILE_BASE_URL}${id}&languageCode=${lang[0]}`,
             method: 'GET'
         });
         const response = await this.requestManager.schedule(request, 3);
@@ -1045,18 +1047,20 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
         return this.parser.parseMangaDetails($, mangaId);
     }
     async getChapters(mangaId) {
+        const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
+        const [titleID, _] = mangaId.split(' ');
         const request = createRequestObject({
-            url: `${WEBTOONS_DOMAIN}/comic/`,
+            url: `${BASE_API}/lineWebtoon/ctrans/translatedEpisodes_jsonp.json?titleNo=${titleID}&languageCode=${lang[0]}&offset=0&limit=10000`,
             method: 'GET',
-            param: mangaId,
         });
         const response = await this.requestManager.schedule(request, 1);
         const $ = this.cheerio.load(response.data);
         return this.parser.parseChapters($, mangaId, 'en');
     }
     async getChapterDetails(mangaId, chapterId) {
+        const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
         const request = createRequestObject({
-            url: `${WEBTOONS_DOMAIN}/comic/${mangaId}/${chapterId}`,
+            url: `${BASE_API}/lineWebtoon/ctrans/translatedWebtoons_jsonp.json?orderType=UPDATE&offset=0&size=${PAGE_SIZE}&languageCode=${lang[0]}`,
             method: 'GET',
         });
         const response = await this.requestManager.schedule(request, 1);
@@ -1225,7 +1229,7 @@ class Parser {
                     const title = element.representTitle;
                     const idNumber = element.titleNo;
                     const teamVersion = element.teamVersion ?? 0;
-                    const id = `/translate/episodeList?titleNo=${idNumber}&teamVersion=${teamVersion}`;
+                    const id = `${idNumber} ${teamVersion}`;
                     const subtitle = element.writeAuthorName;
                     const image = element.thumbnailIPadUrl ?? element.thumbnailMobileUrl ?? '';
                     results.push(createMangaTile({
