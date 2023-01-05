@@ -1041,21 +1041,8 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
             method: 'GET'
         });
         const response = await this.requestManager.schedule(request, 3);
-        console.log('kak bat0' + request.url);
-        console.log('kak bat1' + response.data);
         const $ = this.cheerio.load(response.data);
-        console.log('kok jff' + $('meta[property="og:title"]').attr('content'));
-        const title = $('meta[property="og:title"]').attr('content')?.split('\n')[0]?.trim().toLowerCase().replaceAll(' ', '-') ?? '';
-        const label = $('.genre').text().replace(/ /g, '-').toLowerCase().trim();
-        const requestdetails = createRequestObject({
-            url: `${MOBILE_BASE_URL}/en/${label}/${title}/list`,
-            method: 'GET'
-        });
-        console.log('kak bat2' + requestdetails.url);
-        console.log('kak bat3' + response.data);
-        const responsedetails = await this.requestManager.schedule(requestdetails, 3);
-        const $$ = this.cheerio.load(responsedetails.data);
-        return this.parser.parseMangaDetails($, $$, mangaId);
+        return this.parser.parseMangaDetails($, mangaId);
     }
     async getChapters(mangaId) {
         const request = createRequestObject({
@@ -1122,27 +1109,19 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const entities = require("entities");
 const COVER_BASE_URL = 'https://mwebtoon-phinf.pstatic.net';
 class Parser {
-    parseMangaDetails($, _$$, mangaId) {
-        const title = $('meta[property="og:title"]').attr('content')?.split('\n')[0]?.trim() ?? '';
-        const desc = $('meta[property="og:description"]').attr('content')?.trim() ?? '';
-        const image = $('.background_pic').find('img').attr('src') ?? $('.detail_chal_pic').find('img').attr('src');
-        const rating = Number($('em.grade_num').text().replace(',', '.').trim()) ?? 0;
-        const status = paperback_extensions_common_1.MangaStatus.ONGOING;
-        const author = $('.author').text().trim().split(/\r?\n/)[0]?.trim() ?? '';
-        // The site only provides one primary tag for each series
-        const label = $('.genre').text().replace(/ /g, '-').toLowerCase().trim();
-        const genreId = $('.genre').text().trim();
-        const genres = [(createTag({ label: label, id: genreId }))];
-        const tags = [createTagSection({ id: '0', label: 'genres', tags: genres })];
+    parseMangaDetails($, mangaId) {
+        const title = $('meta[property="og:title"]').attr('content');
+        const desc = $('meta[property="og:description"]').attr('content');
+        const image = $('meta[property="og:image"]').attr('content');
+        const status = paperback_extensions_common_1.MangaStatus.UNKNOWN;
+        const author = $('meta[property="com-linewebtoon:webtoon:author"]').attr('content');
         return createManga({
             id: mangaId,
-            titles: [this.decodeHTMLEntity(title)],
+            titles: [(title ?? '')],
             image: image ?? '',
-            author: this.decodeHTMLEntity(author),
-            rating,
+            author: author,
             status,
-            desc: this.decodeHTMLEntity(desc),
-            tags
+            desc: desc,
         });
     }
     parseChapters($, mangaId, languageCode) {
