@@ -1,8 +1,8 @@
 {
-  "name": "netskys-extensions",
-  "version": "0.0.0",
-  "repositoryName": "Netsky's Extensions (0.8)",
-  "description": "Netsky's extensions for 0.8!",
+  "name": "kolbymls-extensions",
+  "version": "1.0.0",
+  "repositoryName": "Kolby ML's Extensions",
+  "description": "Kolby ML's extensions!",
   "main": "index.js",
   "scripts": {
     "bundle": "paperback bundle",
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/Paperback-iOS/extensions-official.git"
   },
-  "author": "Netsky",
+  "author": "Kolby ML",
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/Paperback-iOS/extensions-official/issues"
@@ -36,8 +36,8 @@
     "typescript": "^4.3.2"
   },
   "dependencies": {
-    "@paperback/toolchain": "0.8.0-alpha.31",
-    "@paperback/types": "0.8.0-alpha.31",
+    "paperback-cli": "^1.4.0",
+    "paperback-extensions-common": "^4.3.5",
     "cheerio": "^1.0.0-rc.12",
     "entities": "^4.4.0",
     "ts-node": "^10.2.1"
