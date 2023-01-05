@@ -1079,7 +1079,7 @@ class WebtoonsTranslations extends paperback_extensions_common_1.Source {
         return this.parser.parseHomeSections(json_data, sectionCallback);
     }
     async getSearchResults(query, metadata) {
-        let page = metadata?.page ?? 1;
+        const page = metadata?.page ?? 1;
         if (page == -1)
             return createPagedResults({ results: [], metadata: { page: -1 } });
         const lang = await (0, WebtoonsTranslationsSettings_1.getLanguages)(this.stateManager);
@@ -1242,13 +1242,13 @@ class Parser {
         return results;
     }
     parseHomeSections(json_data, sectionCallback) {
-        let popularTitle = 'Top Originals';
+        const popularTitle = 'Top Originals';
         console.log('cat' + JSON.stringify(json_data));
         console.log(' cat cat cat cat cat cat test');
         const popularSection = createHomeSection({
             id: '0',
             title: popularTitle,
-            type: paperback_extensions_common_1.HomeSectionType.doubleRow,
+            type: paperback_extensions_common_1.HomeSectionType.singleRowNormal,
             view_more: false
         });
         const popularArray = [];
