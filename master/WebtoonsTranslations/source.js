@@ -988,7 +988,6 @@ const WebtoonsTranslationsParser_1 = require("./WebtoonsTranslationsParser");
 const WEBTOONS_DOMAIN = 'https://webtoons.com/';
 const WEBTOONS_TRANSLATE_DOMAIN = 'https://translate.webtoons.com/';
 const BASE_API = 'https://global.apis.naver.com';
-// const COVER_BASE_URL = 'https://mwebtoon-phinf.pstatic.net'
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44';
 const PAGE_SIZE = 24;
 exports.WebtoonsTranslationsInfo = {
@@ -1106,6 +1105,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Parser = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const entities = require("entities");
+const COVER_BASE_URL = 'https://mwebtoon-phinf.pstatic.net';
 class Parser {
     parseMangaDetails($, mangaId) {
         const title = $('.subj').text().split('\n')[0]?.trim() ?? '';
@@ -1236,7 +1236,7 @@ class Parser {
                     const image = element.thumbnailIPadUrl ?? element.thumbnailMobileUrl ?? '';
                     results.push(createMangaTile({
                         id: id,
-                        image: image ?? 'https://i.imgur.com/GYUxEX8.png',
+                        image: (COVER_BASE_URL + image) ?? 'https://i.imgur.com/GYUxEX8.png',
                         title: createIconText({ text: title }),
                         subtitleText: createIconText({ text: subtitle })
                     }));
@@ -1265,7 +1265,7 @@ class Parser {
             const image = element.thumbnailIPadUrl ?? element.thumbnailMobileUrl ?? '';
             popularArray.push(createMangaTile({
                 id: id,
-                image: image ?? 'https://i.imgur.com/GYUxEX8.png',
+                image: (COVER_BASE_URL + image) ?? 'https://i.imgur.com/GYUxEX8.png',
                 title: createIconText({ text: title }),
                 subtitleText: createIconText({ text: subtitle })
             }));
